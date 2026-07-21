@@ -2,10 +2,12 @@
 
 ---
 
+Zum Notizzettel geht's [hier](Notizzettel.txt).
+
+Und zur Trainerpräsentation [hier](IT_Schulungen_com_Trainerpraesentation_Peter_Loos.pdf)
+
+---
+
 ## [Clean Code Richtlinien für C++ Entwickler](./Clean_Performant_Code/Clean_Code/Readme_Clean_Code.md)
-
-## [Performanz und Optimierungstechniken für C++ Entwickler](./Clean_Performant_Code/Performance_Optimization/Readme_Performance_Optimization.md)
-
-## [Probleme und Techniken des *Secure Programming* für C/C++ Entwickler](./Clean_Performant_Code/Secure_Programming/Readme_Secure_Programming.md)
 
 ---
