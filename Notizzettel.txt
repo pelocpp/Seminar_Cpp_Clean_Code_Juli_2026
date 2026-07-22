@@ -4,4 +4,26 @@ Seminar "C++ Clean Code"
 
 Referent: Peter Loos
 
+Unterlagen:
+
+https://github.com/pelocpp
+
+https://github.com/pelocpp/cpp_design_patterns
+
 ========================================
+
+Design Patterns
+
+RAII
+
+Old C-Style in einem C++ Projekt
+
+Unit-Tests
+
+std::optional, std::expected: Monadisches Interfaces  // Fehlerbehandlung  (C++ 23)
+
+KISS (Keep it simple and stupid) ....
+
+========================================
+
+
