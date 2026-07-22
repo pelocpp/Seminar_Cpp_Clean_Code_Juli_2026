@@ -12,6 +12,9 @@ https://github.com/pelocpp/cpp_design_patterns
 
 ========================================
 
+ToDo-Liste
+---------
+
 Design Patterns
 
 RAII
@@ -24,6 +27,341 @@ std::optional, std::expected: Monadisches Interfaces  // Fehlerbehandlung  (C++ 
 
 KISS (Keep it simple and stupid) ....
 
+std::span
+
+
+Virtueller Basisklassendestruktor   ===> Default Destruktor: Jepp
+
+
 ========================================
 
+    struct Interface
+    {
+        virtual ~Interface() {};
 
+        virtual void method_first() = 0;             // only 'abstract' methods
+        virtual void method_second() = 0;            // only 'abstract' methods
+    };
+
+Wie kommt man im Design von C++ auf " = 0; "
+
+virtual ==> Tabelle: Mit den Adressen von Methoden: = 0:     NULL als Adresse
+
+========================================
+
+Was ist eine abstrakte Klasse?   Unvollständige Klasse
+
+        void method_fifth() const                    // (final) method
+        {
+        }
+
+    Könnte man so auch in einer Kindklasse reinschreiben:   VERDECKEN der Methode in der Vaterklasse
+
+    VOOOOOOOOORSICHT: Das hat einen Geruch / "smell"  // Das will man eigentlich nicht.
+
+    Problem / Lösung: Will ich wirklich DENSELBEN Namen der Methode in der Kindklasse verwenden ????
+
+    Feature: Sie enthält Daten, die für ALLE Kindklassen relevant sind:
+
+    Man tut die Daten "rausfaktorisieren" :)
+
+==========================================
+
+virtual, override, final:
+
+Merkregel: Pro Zeile, die eine entsprechende Methode enthält: Genau EIN Schlüsselwort
+
+==========================================
+
+Non-Virtual Interface (NVI) Pattern
+
+Vergleich: Template Pattern
+
+===========================================
+
+Regel „Interface Segregation Principle (ISP)”
+
+===========================================
+
+Regel „Verwenden Sie Ausnahmen, um das Fehlschlagen einer Methode zu signalisieren”
+
+Fehler:   Wie ?????????????????
+
+a) Return Code
+
+b) via bool   // Resultate via Parameter mit Pointer / Referenz
+
+c) Exception
+
+Ja / Nein Entscheidung.
+
+Pro / Contra Abwägung:
+
+Ich bin kein Freund von Exceptions
+
+a) Exceptions: Contra:
+
+   Hmm, der QUellcode wird etwas "länger"  // try-catch
+   OpCode: Größer: Rückreichen von Ausnahmen über den Stack von unbehandelten Ausnahmen
+
+   C++:   ====>  noexcept Abschalten.  // VORSICHT: Wenn doch eine Ausnahme eintritt: Crash
+
+   Pro: Eine Ausnahme MUSS gefangen werden ...oder Crash:
+
+b) return code:  Pro: Schnell
+
+   Contra: Wird nicht ausgewertet:  Erfordert Disziplin !!!
+
+c) bool: Pro:   klare Aussage
+
+                habe ergebnisse
+
+        Contra: Wird nicht ausgewertet:  Erfordert Disziplin !!!
+
+d) std::expected // C++ 23
+
+   Mischung von a) und b)
+
+====================================================
+
+Es gibt Klassen nur mit Daten ... und solche , die auch Methoden haben:
+
+
+A) Nur Daten:  ===> struct
+
+B) Problem: Schutz: Klasse class // getter / setter: Kontrollierten Zugriff
+
+C) Methoden:  Klasse:    OO // Vererbung // Containment // private Hilfsmethode .............
+
+
+SRP:    Klasse mit Methoden:    
+
+        Entität / Domäne:     Person, Student,  Journal,  IPAdresse, ....
+        
+        ===> Hmmm, die Entität sollte nur EINEN Aspekt der Realität umsetzen.
+
+        Contra:          Viele Klassen  .... diese wollen miteinander agieren ....
+
+
+        Viele Klassen:  Änderungen:  ==> diese beziehen sich nur auf EINE Klasse
+
+        SRP-Klasse:  Gegenstück:  God Object // God class    : Änderung können hier weh tun ...........
+
+        class Camera 
+        {
+            SerialNumber  m_number;         // Containment: Ein Ober-Objekt enthält viele Kindobjekte
+
+            unsigned long m_number;
+            std::string   m_number;
+
+            std::vector ... : WERTEN (value)  // std::unique_ptr  : Wert / Daten auf dem HEAP
+
+
+            Strong Types: =======> SerialNumber m_number;    // Überprüfung
+                                                             // Datum 
+                                                             // Zeichenkettendarstellung
+
+            void print (unsigned long);
+            void print (SerialNumber);
+
+            std::unique_ptr<SerialNumber> getSerialNumber ();   // das würde ich so machen
+
+
+            // =====================================
+
+            std::unique_ptr<SerialNumber>  m_number;        // Why ????
+
+
+            Okay: Möglichweise will ich eine NewSerialNumber haben 
+
+            Dann müsste SerialNumber ein Interface // Abstr. Klasse sein
+
+            Dann brauche ich einen  std::unique_ptr   // Nicht: std::shared_ptr
+
+
+
+
+Es gibt pro Programmaufruf genau ein Camera Objekt:
+
+main()
+{
+
+    Camera myCamera;    // lokale Variable   // STACK  // Ist nicht für RIESEN Datenmengen geeignet .
+
+    // 
+
+    std::shared_ptr<Camera>  myCamera = std::make_shared ...............
+}
+
+
+
+================================================================
+
+High-Level-Module  ==> Low-Level-Module
+
+Low-Level-Module
+
+== System-Schnittstelle:  Treiber  // Win32 Betriebssystemschnittstelle // CRT // STL    / Low Level Schicht
+
+== Anwendung:                            // High Level Schicht
+  
+
+
+Bequem:   Easy Living  =====> Low-Level-Module
+
+Hmmm, was passiert, wenn am Low-Level-Module eine Änderung (Schnittstelle) eintritt:
+
+Das High-Level Modul "fällt auf die Schnauze"
+
+Sinnhaftigkeit: Architektur   // Schichtenmodell
+
+=======================================================
+
+Wie betrachten wir Design Pattern?
+----------------------------------
+
+a) Problem verstehen   (Prototype Pattern)
+
+b) Lösungsvorschlag:   UML
+
+c) Conceptual Example: Umsetzung des Lösungsvorschlags in / nach C++
+
+   Was ist die MEthode clientCode:     Nahtstelle zwischen ANWENDUNG // Pattern (Abstraktion)
+
+
+d) Real-World Example: Beispiel aus der Praxis
+
+Adapter
+-------
+
+a) Ermöglicht die Interaktion von Objekten mit inkompatiblen Schnittstellen.
+
+   Beispiel:  Habe eine Fremd-SW:  XML
+
+   Meine SW versteht nur JSON.
+
+a2)  Ad-Hoc Lösung.
+
+   Pattern: Liefert eine bewährte Lösung.
+
+   Interessant: Wenn es an dieser Stelle noch weitere Anforderungen / Änderungen ...
+
+=========================================================
+
+Adapter
+Proxy
+Template
+Decorator
+
+Wie sehen wir Adapter und Proxy im Vergleich:
+
+A) Ich erkenne Gemeinsamkeiten
+
+   Es geht um 2 Objekte: Über ein erstes Objekt gelange ich zu einem zweiten Objekt.
+
+b) Wir sollten nie den Zweck aus den Augen verlieren:
+
+   i) Adapter:  Kompatibilität zu einem zweiten Objekt
+
+   ii) Proxy:   Zugriffsbeschränkung // Decorator-Tätigkeiten 
+
+                Tätigkeiten (SRP), die ich an das zweite Objekt nicht hinzufügen kann.
+
+=============================================
+
+Eager vs. Lazy Proxy:
+
+Eager:  Gierig - Direkt: Wir tun das, was zu tun ist
+
+Lazy:  Faul ... - Direkt: Wir tun das, was zu tun ist - aber möglicherweise nicht jetzt :)
+
+      Ist sinnvoll, bei VIELEN Objekten, die VIEL Speicher benötigen
+
+
+=============================================
+
+Decorator:
+
+Anderer Name:    Hüllen - Pattern // Wrapper
+
+Merker: Beschränken ?!?!
+
+==============================================
+
+Adapter
+Proxy
+Decorator
+
+Simulation:  Bakterien.
+
+Methode:     progress
+
+Eine Bakterie ist irgendwann tot.
+
+Man kann die Methode progress dekorieren // man kann deren Aufruf durch Hüllenobjekte erweitern.
+
+==> Sinn und Zweck:
+
+Dekorieren:  ausschmücken (temporär) :  Vorhandenes 
+
+Bakterie:  Alive => Dead   : ausschmücken
+
+Ich suche eine Anwendung des Decorator Patterns aus der SW-Entwicklung.
+Ich betrachte Baktieren.
+Diese leben (Zustand alive) und sterben (Zustand dead).
+Dies kann ich durch dekoriende Methoden eines Baktieren-Objekts erreichen.
+Ist dies eine beabsichtigte Umsetzung des Decorator Patterns oder eher nicht.
+Es geht mir vor allem um den Statuswechsel eines Baktieren-Objekts.
+
+
+==========================================================================
+
+State - Pattern
+===============
+
+==========================================================================
+
+Template Method Pattern:
+------------------------
+
+ACHTUNG: Hat nichts mit C++ Templates zu tun.
+
+Einführung:
+
+Tetris:
+
+7 Figuren.
+
+Was ist im Tetris Spiel, wenn wir es spielen, allen Figuren gemeinsam:
+
+Die Bewegung durch das Spiel:
+
+while (unten nicht angestoßen) {
+
+   if (input) {
+   
+      gehe nach links;
+      oder
+      gehe nach rechts;
+   }
+
+   gehe nach unten;
+}
+
+Durch eine zentrale Methode zu realisieren:  Template Method Pattern
+
+zentrale Methode: Schablone für alle real ex. Figuren.
+
+Was ist dann unterschiedlich: Die Ausführung einer EINZELNEN Aktion: gehe nach links;
+weil das hängt vom Umfang / Ausmaß der Figur ab.
+
+================================================
+
+Template Pattern
+
+NVI Pattern
+
+SW Design Pattern: Das Template Method Pattern und das NVI Pattern sind sehr ähnlich.
+Kannst du Unterschiede und Gemeinsamkeiten herausarbeiten?
+
+================================================
