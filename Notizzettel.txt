@@ -29,9 +29,29 @@ KISS (Keep it simple and stupid) ....
 
 std::span
 
-
 Virtueller Basisklassendestruktor   ===> Default Destruktor: Jepp
 
+explicit
+
+========================================
+
+Donnerstag:
+
+== Unit-Test // Catch2
+
+== Old C-Style in einem C++ Projekt
+
+== std::optional, std::expected: Monadisches Interfaces  // Fehlerbehandlung  (C++ 23)
+
+== std::span
+
+== explicit
+
+== KISS (Keep it simple and stupid) ....
+
+== Design Pattern
+
+== Literatur
 
 ========================================
 
@@ -365,3 +385,66 @@ SW Design Pattern: Das Template Method Pattern und das NVI Pattern sind sehr äh
 Kannst du Unterschiede und Gemeinsamkeiten herausarbeiten?
 
 ================================================
+
+RAII:
+
+Resources des unterlagerten Betriebssystems
+
+SDK / API
+
+Datenbank
+
+Externes 
+
+Nicht: Kern C++
+
+Thema:
+
+open()   // attach // SqlConnection  // Win32 Handle // new (Smart Ptr) //
+close()  // detach   // ReleaseConn  // CloseHandle  // delete          //
+
+Problem: Was ist, wenn der "zweite" Aufruf fehlt !
+
+Lösung:  Idiom // Pattern
+
+a) Idee: OO
+
+b) Konstruktoren / Destruktoren
+
+c) C++: Wann wird ein Destruktor aufgerufen ?? Am Ende des Scopes (Funktion / Methode)
+
+d) Scope:
+
+{
+    ...
+}
+
+Renaissance bekommen haben: RAII
+
+e) Resource:  Acquisition:  Konstruktor
+              Freigabe:     Destruktor  <======   Deterministisch
+
+f) Man verstecke die Resource (Handle) in einer Hüllenklasse:  Konstruktor, Destruktor
+
+Beispiel:  new / delete
+
+1. Beispiel:
+
+a) STL  // std::mutex
+
+lock()   / unlock()
+
+Korrekt:
+
+std::mutex m;
+
+m.lock();
+// tue etwas kritisches
+m.unlock();
+
+Lösung: Im Real Code verwendet man die Klasse  std::mutex nicht / auf diese Weise:
+
+std::lock_guard
+
+2. Beispiel:
+
