@@ -4,6 +4,9 @@ Seminar "C++ Clean Code"
 
 Referent: Peter Loos
 
+peter.loos@gmx.de
+-----------------
+
 Unterlagen:
 
 https://github.com/pelocpp
