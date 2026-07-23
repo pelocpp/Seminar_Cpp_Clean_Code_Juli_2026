@@ -17,13 +17,13 @@ ToDo-Liste
 
 Design Patterns
 
-RAII
+RAII: Jepp
 
-Old C-Style in einem C++ Projekt
+Old C-Style in einem C++ Projekt: Jepp
 
-Unit-Tests
+Unit-Tests: Jepp
 
-std::optional, std::expected: Monadisches Interfaces  // Fehlerbehandlung  (C++ 23)
+std::optional, std::expected: Monadisches Interfaces  // Fehlerbehandlung  (C++ 23): Jepp
 
 KISS (Keep it simple and stupid) ....
 
@@ -31,7 +31,7 @@ std::span
 
 Virtueller Basisklassendestruktor   ===> Default Destruktor: Jepp
 
-explicit
+explicit: Jepp
 
 ========================================
 
@@ -49,7 +49,11 @@ Donnerstag:
 
 == KISS (Keep it simple and stupid) ....
 
-== Design Pattern
+== Design Pattern: Prototype, Visitor, ....  
+
+== Design Pattern: Builder:  "Fluent Programming Style (Named Constructors)"
+
+
 
 == Literatur
 
@@ -447,4 +451,317 @@ Lösung: Im Real Code verwendet man die Klasse  std::mutex nicht / auf diese Wei
 std::lock_guard
 
 2. Beispiel:
+
+=================================================================
+
+KISS:   Keep it simple & stupid
+
+DRY:    Don't repeat yourself
+
+POLS:   Principle of least surprise 
+
+=================================================================
+
+Include-Files:
+
+#include <string>
+#include <vector>
+
+#include "MyClass.h"
+
+2 Optionen:
+
+A)
+
+#include <string>
+#include <vector>
+
+#include "MyClass.h"
+
+B)
+
+.cpp:
+
+#include "MyClass.h"
+
+#include <string>
+#include <vector>
+
+=============> B)
+
+Weitere Frage:
+
+Header File: "MyClass.h"
+
+Strategie // bewährte Vorgehensweise:   
+
+Ein selbst-geschriebenes Include-File kümmert sich um alle seine Abhängigkeiten (std::vector)
+
+Man kann überall dieses  Include-File verwenden.  // man kann das  Include-File umziehen ...
+
+// Begin-File
+
+#include <vector>
+
+class MyClass
+{
+    std::vector<int> m_data;
+};
+
+// End-File
+
+=========> #pragma once
+
+
+
+class Time
+{
+   int m_hours;
+   int m_minutes;
+   int m_seconds;
+
+   std::vector<int> m_data;
+}
+
+Kopierkonstruktor (Copy Constructor)	X(const X&)
+Kopierende Zuweisung (Assignment Operator)	X& operator=(const X&)
+
+Ja oder Nein:   
+
+Time t1, t2;
+
+t1 = t2;   // Geht !!!!!!!  
+
+a) Elementare Variablen:  Wie ??: Es werden die BITS dupliziert.
+
+b) std::vector<int>:   Wie ??: Ein STL Container bringt den Operator operator= mit !!!
+
+class Data
+{
+   int* m_data;    // new int() oder new int[100]
+
+   ~Data () { delete m_data; ODER  delete[] m_data; }
+}
+
+Data d1, d2;
+
+d1 = d2; // Geht auch !!!!!!!  PROBLEM: a) 2-Mal derselbe Pointer UND kein delete
+                               PROBLEM: b) Mit Destruktor: Besser, weil Speicher freigegeben wird ,
+                                        aber: Crash: 2 Mal delete von derselben Adresse
+                               KORREKT: Nur mit 
+                                        kopierende Zuweisung (Assignment Operator)	X& operator=(const X&)
+
+                               Smart-Pointer: Dann wird das automatisch gemacht.
+
+=======================
+
+SimpleString s1, s2, s3;
+
+.....
+
+s1 = (s2 = s3);     // Assoziativität
+
+Was wird an s1 zugewiesen ?? s2
+
+Bebachtung: operator=
+
+
+SimpleString operator=(const SimpleString& other)   // KOPIE
+
+
+SimpleString& operator=(const SimpleString& other)   // Ginge
+
+s1 = s2;
+
+s1 = (s2 = s3);     // Fehler: operator= muss was zurückliefern: s2 ABER KEINE KOPIE von s2
+
+
+SimpleString & operator=(const SimpleString& other)
+{
+    return *this;    // SimpleString* NEIN  // *this steht für SimpleString
+}
+
+Referenzen in C++:   C# Referenzen
+
+
+
+
+SimpleString s1, s1;
+
+s1 = s2;
+
+// Linke Seite freigeben
+
+// rechte Seite in linke Seite kopieren
+
+s1.operator= (s2);
+
+Achtung:
+
+SimpleString& operator=(SimpleString other) ;
+
+Beim Aufruf wird eine Kopie von s2 erstellt.
+
+Wer gibt die linke Seite frei ????????????
+
+======================================================
+
+01: class Rectangle
+02: {
+03: private:
+04:     double m_width;
+05:     double m_height;
+06: 
+07: public:
+08:     Rectangle(double width, double height) 
+09:         : m_width(width), m_height(height) 
+10:     {}
+11: 
+12:     double area() const {   // const <=================
+13:         return  m_width * m_height;
+14:     }
+
+Worum geht es bei diesem const ???????????????????
+
+C++:  Paradigmen: Objekte haben Zustand (State)
+
+Funktionale Programmierung:  Einfacher, schneller (???)
+
+Funktion: Input (Paramter), Output (Ergebnis)
+
+          KEINE Instanzvariablen
+
+HW // CPU =====================> Befehlscache:
+
+                Parallelisierung // Pipelings
+
+                Störender Effekt: Es muss eine Instanzvariable geändert werden.
+
+Funktionale Programmierung: Haskell Parallelisierung auf unterster Ebene.
+
+Diese in C++ auch in Anspruch nehmen: const
+
+Code-Generator.
+
+===========================
+
+
+Vermeiden Sie das Auslösen von Ausnahmen in Destruktoren.
+
+Konstruktor:  fopen  
+
+fopen: NEVER !!!!!!!!!!!!!!!!!! in einem Konstruktor
+
+Methode:  attach, open, ...
+
+Destruktor:  Ausnahmen NEVER
+
+Methode:   release () 
+
+================================================
+
+class Person
+{
+private:
+    std::string   m_name;
+    size_t        m_age;
+
+public:
+    Person() = default;
+    Person(const std::string& name, size_t age)
+        : m_name{ name }, m_age{ age }
+    {}
+
+    std::string getName () { return m_name; }
+
+    const std::string& getName () { return m_name; }  // Schneller
+
+    ...
+
+};
+
+
+90% Verhalten // ex. Code:
+
+void func()
+{
+    Person hans (......);
+
+    const std::string& name = hans.getName();
+
+    Log.write();
+    
+    up (name);
+
+}
+
+===================================
+
+std::expected
+
+===================================
+
+Prototype // Builder // Visitor
+
+===================================
+
+Erstelle eine Kopie eines Objekts              
+
+       // durch einen Zeiger auf seinen Basistyp.
+
+Muster: Problem.
+
+Erstelle eine Kopie eines Objekts    : WO IST DAS PROBLEM:  Kopier-Konstruktor.
+
+Darum geht es gar nicht ....
+
+Game:  Gameboard   ==> Figuren
+
+class Figure
+
+class Warrior : public Figure
+class Wizard: public Figure
+class Enemy : public Figure
+
+
+ Figure*  myboard [100][100] ;
+
+ Den nächsten Zug berechnen:   Kopie des aktuellen Bretts:  
+
+                      In der Kopie des Bretts müssen auch die Figuren-Objekte KOPIERT sein.
+                       ==> Alive >==> Dead
+
+Erstelle eine Kopie eines Objekts durch einen Zeiger auf seinen Basistyp.
+
+Habe: Figure*   Bräuchte: Warrior* oder Wizard* oder .....
+
+====================================================
+
+Builder: Fluent Interface
+
+====================================================
+
+Command Pattern: 
+
+Nicht immer lassen sich Funktionen / Methoden "synchron" / oder sofort ausführen.
+
+==> Ereignisse:  Bearbeitung.
+
+====================================================
+
+Visitor:
+
+== Einer Hierarchie
+== Zwei  Hierarchien
+
+Whyyyyyyyyyyyyyyyyyyyyy
+
+Legacy Code:
+------------
+
+SRP ==> Widerspruch: Neue Funktionalität: Zu realisieren.
+
+Eine Option: Realisierung mit minimalen Änderungen an vorhandenem Legacy Code.
+
+Legacy Code:  Beibehalten werden, aber: besucht.
 

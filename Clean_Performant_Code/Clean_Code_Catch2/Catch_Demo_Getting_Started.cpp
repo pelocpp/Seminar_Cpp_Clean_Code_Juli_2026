@@ -116,7 +116,7 @@ SCENARIO("bdd vectors can be sized and resized", "[bdd_vector]") {
 
     GIVEN("A vector with some items") {
 
-        std::vector<int> v(5);
+        std::vector<int> v(5);   
 
         REQUIRE(v.size() == 5);
         REQUIRE(v.capacity() >= 5);
@@ -133,8 +133,8 @@ SCENARIO("bdd vectors can be sized and resized", "[bdd_vector]") {
             v.resize(0);
 
             THEN("the size changes but not capacity") {
-                REQUIRE(v.size() == 10);
-                REQUIRE(v.capacity() >= 5);
+                REQUIRE(v.size() == 10);   // ????? Wrong 10 Correct: 0
+                REQUIRE(v.capacity() >= 5);   // Correct
             }
         }
         WHEN("more capacity is reserved") {
@@ -233,10 +233,10 @@ TEST_CASE_METHOD(VectorFixture, "sum", "[stack]") {
         sum += m_data.top();
         m_data.pop();
     }
-    REQUIRE(sum == MaxValue * (MaxValue + 1) / 2);
+    REQUIRE(sum == 15);    // 1+ 2+ 3+ 4+ 5 = 15  // (5 * 6) / 2 = 15
 }
 
-TEST_CASE_METHOD(VectorFixture, "product", "[stack]") {
+TEST_CASE_METHOD(VectorFixture, "product", "[stack]") {   // ein neues Fixture Objekt angelegt
     int prod{ 1 };
     while (!m_data.empty()) {
         prod *= m_data.top();
@@ -268,8 +268,8 @@ TEST_CASE("More Bugs, bugs, bugs", "[Checked_Bug]")
     auto match_expression1 = Catch::EndsWith("as a service");
     CHECK_THAT(str, match_expression1);
 
-    //auto match_expression2 = Catch::EndsWith("as a matcher");
-    //CHECK_THAT(str, match_expression2);
+    auto match_expression2 = Catch::EndsWith("as a matcher");
+    CHECK_THAT(str, match_expression2);
 }
 
 TEST_CASE("Floating Point Arithmetic", "[Floating]")

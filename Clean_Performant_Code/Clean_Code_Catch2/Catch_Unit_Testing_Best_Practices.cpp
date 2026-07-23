@@ -59,14 +59,11 @@ TEST_CASE("IsPrime // checks if argument is a prime number // returns true", "[I
 
 TEST_CASE("More IsPrime // checks if argument is a prime number // returns true", "[IsPrime__Demonstrate_AAA_Pattern__Returns_True]")
 {
-    // arrange
     size_t number = 5;
     auto expected = true;
 
-    // act
     auto actual = IsPrime(number);
 
-    // assert
     CHECK(expected == actual);
 }
 
@@ -100,17 +97,15 @@ TEST_CASE("Bad Example for testing several methods", "[AdditionAndSubtraction_In
 
 TEST_CASE("Good Example for testing a single method", "[Add_TwoNumbers_ReturnsSum]")
 {
-    // arrange
+    // arrange   // Werte + Ergebnisse
     auto [a, b, expected] = GENERATE(
         std::tuple{ 1, 4, 5 },
-        std::tuple{ 2, 5, 7 },
+        std::tuple{ 2, 5, 8 },
         std::tuple{ 3, 6, 9 }
     );
 
-    // act 
     auto actual = Calculator::add(a, b);
 
-    // assert
     CHECK(expected == actual);
 }
 
@@ -118,7 +113,7 @@ TEST_CASE("Good Example for testing a single method", "[Add_TwoNumbers_ReturnsSu
 // global variables
 
 // example for a global variable
-static int g_counter = 0;
+static int g_counter = 100;
 
 struct GlobalGuard
 {
@@ -130,20 +125,35 @@ struct GlobalGuard
 // using a RAII object
 TEST_CASE("Global Variables with RAII Guard", "[global_variables_RAII_guard]")
 {
+    // arrange
     GlobalGuard guard;
+
+    // act
     g_counter = 123;
+
+    // assert
     REQUIRE(g_counter == 123);
 }
 // automatically reset after test
 
 struct GlobalFixture
 {
-    GlobalFixture() { g_counter = 0; }   // setup
-    ~GlobalFixture() { g_counter = 0; }  // teardown
+    GlobalFixture() { 
+        g_counter = 0; 
+    }   // setup
+    ~GlobalFixture() { 
+        g_counter = 0;
+    }  // teardown
 };
 
 TEST_CASE_METHOD(GlobalFixture, "Global Variables with Test Fixture", "[global_variables_test_fixture]") {
+
+    // arrange: leer
+
+    // act
     g_counter++;
+    
+    // assert
     REQUIRE(g_counter == 1);
 }
 

@@ -14,6 +14,27 @@
 #include <experimental/propagate_const>
 #endif
 
+
+
+namespace CleanCodeGuidelines_SEMINAR {
+
+    class X
+    {
+    public:
+        //X (int x) {}
+        X() {}
+
+    private:
+        int m_x;
+    };
+
+    void test_seminar()
+    {
+        X x;
+    }
+}
+
+
 namespace CleanCodeGuidelines_ClassicCpp {
 
     namespace ClassVsStructInvariants {
@@ -144,8 +165,8 @@ namespace CleanCodeGuidelines_ClassicCpp {
 
             struct Point2D
             {
-                double m_x{};
-                double m_y{};
+                double m_x{ 1.0 };
+                double m_y{ 1.0 };
             };
 
             static void test_variant_02() {
@@ -169,12 +190,12 @@ namespace CleanCodeGuidelines_ClassicCpp {
                 double m_x{};
                 double m_y{};
 
-                Point2D(double x, double y) : m_x{ x }, m_y{ y } {}
+                Point2D(double x, double y) : m_x{ x }, m_y{ y } {}  // user-defined c'tor
             };
 
             static void test_variant_03() {
 
-                // Point2D point;  // error: does not compile
+              //  Point2D point;  // error: does not compile
                 Point2D anotherPoint{ 1.0, 2.0 };
             }
         }
@@ -255,6 +276,25 @@ namespace CleanCodeGuidelines_ClassicCpp {
             }
         }
     
+        namespace Variant_08 {
+
+            struct Point2D
+            {
+              //  Point2D() { m_isReady = false; }
+                Point2D() = default;
+
+                double m_x{ };
+                double m_y{ };
+                bool m_isReady{ };   // <==============
+            };
+
+            static void test_variant_08() {
+
+                Point2D point;
+            }
+        }
+
+
         static void guidelines_initialization_of_structs()
         {
             Variant_01::test_variant_01();
@@ -264,6 +304,8 @@ namespace CleanCodeGuidelines_ClassicCpp {
             Variant_05::test_variant_05();
             Variant_06::test_variant_06();
             Variant_07::test_variant_07();
+            Variant_08::test_variant_08();
+
         }
     }
 
@@ -563,9 +605,9 @@ namespace CleanCodeGuidelines_ClassicCpp {
                 // refined copy assignment operator
                 SimpleString& operator=(SimpleString other) {
 
-                    this->swap(other);
+                    this->swap(other); // danach: this entspricht other
                     return *this;
-                }
+                }   // other geht aus dem Scope ==> *this wird freigegeben
 
                 // getter
                 std::size_t size() const { return m_elems; }
@@ -743,6 +785,7 @@ namespace CleanCodeGuidelines_ClassicCpp {
             }
 
             double area() const {
+               // m_width++;
                 return  m_width * m_height;
             }
 
@@ -905,7 +948,7 @@ namespace CleanCodeGuidelines_ClassicCpp {
             int m_meters;
 
         public:
-            /*explicit*/ Distance(int meters)             // put explicit into comment / remove comment
+            explicit Distance(int meters)             // put explicit into comment / remove comment
                 : m_meters{ meters }
             {}
 
@@ -921,9 +964,9 @@ namespace CleanCodeGuidelines_ClassicCpp {
         static void guidelines_implicit_conversion()
         {
             auto meters{ 10 };
-            printDistance(meters); // implicit conversion: int ==> Distance
+           // printDistance(meters); // implicit conversion: int ==> Distance
             // or
-            // printDistance(static_cast<Distance>(meters));  
+            printDistance(static_cast<Distance>(meters));  
         }
     }
 
@@ -959,7 +1002,10 @@ namespace CleanCodeGuidelines_ClassicCpp {
 
 void clean_code_guidelines_classic_cpp()
 {
-    CleanCodeGuidelines_ClassicCpp::ClassVsStructInvariants::guidelines_invariants();    // crashes intentionally
+  //  CleanCodeGuidelines_SEMINAR::test_seminar();
+
+
+   // CleanCodeGuidelines_ClassicCpp::ClassVsStructInvariants::guidelines_invariants();    // crashes intentionally
     CleanCodeGuidelines_ClassicCpp::DefaultedConstructors::guidelines_defaulted_constructor();
     CleanCodeGuidelines_ClassicCpp::InitializationOfStructs::guidelines_initialization_of_structs();
     CleanCodeGuidelines_ClassicCpp::InitializationOfObjects::guidelines_initialization_of_objects();
